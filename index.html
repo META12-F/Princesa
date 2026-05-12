@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi Karlita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            user-select: none; 
+            -webkit-user-select: none;
+            touch-action: none; 
+        }
+
+        /* === FASE 1: ESCÁNER BIOMÉTRICO === */
+        #scanner-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 1.5s ease;
+        }
+        .scan-text {
+            color: #888;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .touch-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .progress-ring {
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: #d4af37; 
+            opacity: 0;
+            transform: rotate(0deg);
+        }
+        .fingerprint-icon {
+            font-size: 50px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.3s;
+        }
+        .touch-btn.active .fingerprint-icon {
+            color: #d4af37;
+            text-shadow: 0 0 15px #d4af37;
+        }
+        .touch-btn.active .progress-ring {
+            opacity: 1;
+            animation: spin 3s linear forwards; 
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent; }
+            25% { border-right-color: #d4af37; }
+            50% { border-bottom-color: #d4af37; }
+            75% { border-left-color: #d4af37; }
+            100% { transform: rotate(360deg); border-color: #d4af37; box-shadow: 0 0 30px #d4af37; }
+        }
+        #status-msg {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #d4af37;
+            height: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* === FASE 2: REFUGIO VIRTUAL === */
+        #sanctuary-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #2a0808 0%, #000000 100%);
+            z-index: 5;
+            opacity: 0;
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            transition: opacity 2s ease;
+        }
+        
+        .glowing-heart {
+            font-size: 60px;
+            color: #ff3366;
+            text-shadow: 0 0 40px #ff3366, 0 0 80px #ff3366;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 2s ease 1s;
+        }
+        .sanctuary-active .glowing-heart {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        .letter {
+            text-align: center;
+            max-width: 400px;
+        }
+        .letter h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #d4af37;
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 2s ease 2s;
+        }
+        .letter p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        .sanctuary-active .letter h1 { opacity: 1; }
+        .sanctuary-active .letter p:nth-child(2) { transition: all 2s ease 3.5s; opacity: 1; transform: translateY(0); }
+        .sanctuary-active .letter p:nth-child(3) { transition: all 2s ease 5.5s; opacity: 1; transform: translateY(0); }
+        .sanctuary-active .letter p:nth-child(4) { transition: all 2s ease 7.5s; opacity: 1; transform: translateY(0); }
+        
+        .signature {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            font-size: 18px;
+            margin-top: 30px;
+            opacity: 0;
+        }
+        .sanctuary-active .signature { transition: opacity 2s ease 9.5s; opacity: 1; }
+
+        .gold-dust {
+            position: absolute;
+            background: #d4af37;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: floatGold 6s ease-in-infinite;
+        }
+        @keyframes floatGold {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        /* Ocultar el reproductor de YouTube */
+        #youtube-player {
+            position: absolute;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- REPRODUCTOR DE YOUTUBE OCULTO -->
+    <div id="youtube-player"></div>
+
+    <!-- PANTALLA 1: Escáner -->
+    <div id="scanner-screen">
+        <div class="scan-text">
+            Protocolo de Seguridad<br><br>
+            <span style="font-size: 11px; color: #555;">Sube el volumen y mantén presionado</span>
+        </div>
+        
+        <div class="touch-btn" id="btn-scan">
+            <div class="progress-ring"></div>
+            <div class="fingerprint-icon">👆</div>
+        </div>
+        
+        <div id="status-msg">Mantén presionado para confirmar identidad</div>
+    </div>
+
+    <!-- PANTALLA 2: El Refugio -->
+    <div id="sanctuary-screen" class="sanctuary">
+        <div class="glowing-heart">❤️</div>
+        <div class="letter">
+            <h1>Bienvenida, mi amor.</h1>
+            <p>Sé que el mundo allá afuera va muy rápido. Que trabajas sin parar, que a veces el cansancio pesa y las desveladas son muchas.</p>
+            <p>Por eso programé este pequeño espacio para ti. Para que cuando sientas que no puedes más, sepas que tienes un lugar seguro donde solo tienes que respirar, soltar el estrés y dejar que yo te cuide.</p>
+            <p>Eres una mujer increíble, Karlita. Fuerte, hermosa y valiente. Guardo mis madrugadas, mis canciones y mi mejor versión para compartirlas contigo. Ya quiero verte a los ojos este viernes.</p>
+            <div class="signature">Tu ingeniero y admirador, David.</div>
+        </div>
+    </div>
+
+    <!-- API DE YOUTUBE -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // Configuración de la música
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: '-hoZpSoKAYE', // ID de la canción que elegiste
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'showinfo': 0,
+                    'rel': 0
+                }
+            });
+        }
+
+        const btnScan = document.getElementById('btn-scan');
+        const statusMsg = document.getElementById('status-msg');
+        const scannerScreen = document.getElementById('scanner-screen');
+        const sanctuaryScreen = document.getElementById('sanctuary-screen');
+        
+        let pressTimer;
+        let isScanComplete = false;
+        const requiredTime = 3000; // 3 segundos presionando
+
+        // Inicia el escaneo y la música
+        const startScan = (e) => {
+            if(isScanComplete) return;
+            e.preventDefault(); 
+            btnScan.classList.add('active');
+            statusMsg.textContent = "Analizando... no sueltes.";
+            
+            // Reproducir música al tocar
+            if(player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
+            
+            pressTimer = setTimeout(() => {
+                scanComplete();
+            }, requiredTime);
+        };
+
+        // Si suelta antes de tiempo
+        const cancelScan = () => {
+            if(isScanComplete) return; // Si ya terminó, no hace nada
+            clearTimeout(pressTimer);
+            btnScan.classList.remove('active');
+            statusMsg.textContent = "Escaneo interrumpido. Mantén presionado.";
+            
+            // Pausar música si suelta el dedo
+            if(player && typeof player.pauseVideo === 'function') {
+                player.pauseVideo();
+            }
+        };
+
+        // Escaneo completado
+        const scanComplete = () => {
+            isScanComplete = true;
+            statusMsg.style.color = "#00ff00";
+            statusMsg.textContent = "Identidad confirmada: La mujer más hermosa.";
+            btnScan.style.pointerEvents = "none"; 
+            
+            setTimeout(() => {
+                scannerScreen.style.opacity = "0";
+                setTimeout(() => {
+                    scannerScreen.style.display = "none";
+                    sanctuaryScreen.style.visibility = "visible";
+                    sanctuaryScreen.style.opacity = "1";
+                    sanctuaryScreen.classList.add('sanctuary-active');
+                    createGoldDust();
+                }, 1500);
+            }, 1500);
+        };
+
+        // Eventos táctiles
+        btnScan.addEventListener('touchstart', startScan);
+        btnScan.addEventListener('touchend', cancelScan);
+        btnScan.addEventListener('mousedown', startScan);
+        btnScan.addEventListener('mouseup', cancelScan);
+        btnScan.addEventListener('mouseleave', cancelScan);
+
+        // Crear partículas
+        function createGoldDust() {
+            for(let i = 0; i < 40; i++) {
+                let dust = document.createElement('div');
+                dust.className = 'gold-dust';
+                dust.style.left = Math.random() * 100 + 'vw';
+                dust.style.width = Math.random() * 4 + 2 + 'px';
+                dust.style.height = dust.style.width;
+                dust.style.animationDuration = Math.random() * 3 + 4 + 's';
+                dust.style.animationDelay = Math.random() * 5 + 's';
+                sanctuaryScreen.appendChild(dust);
+            }
+        }
+    </script>
+</body>
+</html>
