@@ -19,7 +19,7 @@
             touch-action: none; 
         }
 
-        /* PANTALLA INICIAL (Desbloquea el audio) */
+        /* PANTALLA INICIAL */
         #start-screen {
             position: absolute;
             width: 100%;
@@ -165,7 +165,7 @@
         <source src="cancion.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Pantalla Inicial para destrabar audio -->
+    <!-- Pantalla Inicial -->
     <div id="start-screen">
         <button class="btn-start" onclick="initSystem()">INICIAR SISTEMA</button>
     </div>
@@ -207,12 +207,18 @@
         let isScanComplete = false;
         const requiredTime = 3000; 
 
-        // Función clave: El primer clic destraba el audio del celular
+        // ESTO REINICIA LA MEMORIA DEL AUDIO CADA QUE ENTRAS
+        window.onload = () => {
+            reproductorAudio.pause();
+            reproductorAudio.currentTime = 0;
+            reproductorAudio.load(); 
+        };
+
         function initSystem() {
-            // Un truco: reproducir y pausar inmediatamente para que el cel confíe en el audio
             reproductorAudio.play().then(() => {
                 reproductorAudio.pause();
-            }).catch(e => console.log("Audio prep falló", e));
+                reproductorAudio.currentTime = 0; // Se asegura de que inicie desde el principio
+            }).catch(e => console.log("Audio prep", e));
 
             startScreen.style.opacity = '0';
             setTimeout(() => {
@@ -228,7 +234,6 @@
             btnScan.classList.add('active');
             statusMsg.textContent = "Analizando... no sueltes.";
             
-            // Ahora sí, arranca la música
             reproductorAudio.play();
             
             pressTimer = setTimeout(() => {
@@ -264,7 +269,6 @@
             }, 1500);
         };
 
-        // Escuchar eventos táctiles
         btnScan.addEventListener('touchstart', startScan, {passive: false});
         btnScan.addEventListener('touchend', cancelScan);
         btnScan.addEventListener('mousedown', startScan);
