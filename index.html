@@ -19,7 +19,33 @@
             touch-action: none; 
         }
 
-        /* === FASE 1: ESCÁNER BIOMÉTRICO === */
+        /* PANTALLA INICIAL (Desbloquea el audio) */
+        #start-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            background-color: #050505;
+            transition: opacity 0.5s;
+        }
+        .btn-start {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 15px 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .btn-start:active { background: rgba(212, 175, 55, 0.2); }
+
+        /* FASE 1: ESCÁNER */
         #scanner-screen {
             position: absolute;
             width: 100%;
@@ -29,6 +55,8 @@
             justify-content: center;
             align-items: center;
             z-index: 10;
+            opacity: 0;
+            visibility: hidden;
             transition: opacity 1.5s ease;
         }
         .scan-text {
@@ -74,10 +102,10 @@
             animation: spin 3s linear forwards; 
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent; }
-            25% { border-right-color: #d4af37; }
-            50% { border-bottom-color: #d4af37; }
-            75% { border-left-color: #d4af37; }
+            0% { transform: rotate(0deg); border-color: transparent; }
+            25% { border-top-color: #d4af37; border-right-color: transparent; }
+            50% { border-top-color: #d4af37; border-right-color: #d4af37; border-bottom-color: transparent; }
+            75% { border-color: #d4af37; border-left-color: transparent; }
             100% { transform: rotate(360deg); border-color: #d4af37; box-shadow: 0 0 30px #d4af37; }
         }
         #status-msg {
@@ -88,7 +116,7 @@
             letter-spacing: 1px;
         }
 
-        /* === FASE 2: REFUGIO VIRTUAL === */
+        /* FASE 2: REFUGIO */
         #sanctuary-screen {
             position: absolute;
             width: 100%;
@@ -104,7 +132,6 @@
             padding: 25px;
             transition: opacity 2s ease;
         }
-        
         .glowing-heart {
             font-size: 60px;
             color: #ff3366;
@@ -115,91 +142,48 @@
             transform: translateY(20px);
             transition: all 2s ease 1s;
         }
-        .sanctuary-active .glowing-heart {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.15); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.15); }
-            60% { transform: scale(1); }
-        }
+        .sanctuary-active .glowing-heart { opacity: 1; transform: translateY(0); }
+        @keyframes heartbeat { 0%, 30%, 60% { transform: scale(1); } 15%, 45% { transform: scale(1.15); } }
 
-        .letter {
-            text-align: center;
-            max-width: 400px;
-        }
-        .letter h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            color: #d4af37;
-            margin-bottom: 20px;
-            opacity: 0;
-            transition: opacity 2s ease 2s;
-        }
-        .letter p {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #e0e0e0;
-            margin-bottom: 15px;
-            opacity: 0;
-            transform: translateY(15px);
-        }
+        .letter { text-align: center; max-width: 400px; }
+        .letter h1 { font-family: 'Cinzel', serif; font-size: 24px; color: #d4af37; margin-bottom: 20px; opacity: 0; transition: opacity 2s ease 2s; }
+        .letter p { font-size: 15px; line-height: 1.8; color: #e0e0e0; margin-bottom: 15px; opacity: 0; transform: translateY(15px); }
         .sanctuary-active .letter h1 { opacity: 1; }
         .sanctuary-active .letter p:nth-child(2) { transition: all 2s ease 3.5s; opacity: 1; transform: translateY(0); }
         .sanctuary-active .letter p:nth-child(3) { transition: all 2s ease 5.5s; opacity: 1; transform: translateY(0); }
         .sanctuary-active .letter p:nth-child(4) { transition: all 2s ease 7.5s; opacity: 1; transform: translateY(0); }
-        
-        .signature {
-            font-family: 'Cinzel', serif;
-            color: #d4af37;
-            font-size: 18px;
-            margin-top: 30px;
-            opacity: 0;
-        }
+        .signature { font-family: 'Cinzel', serif; color: #d4af37; font-size: 18px; margin-top: 30px; opacity: 0; }
         .sanctuary-active .signature { transition: opacity 2s ease 9.5s; opacity: 1; }
 
-        .gold-dust {
-            position: absolute;
-            background: #d4af37;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            animation: floatGold 6s ease-in-infinite;
-        }
-        @keyframes floatGold {
-            0% { transform: translateY(0) scale(0); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
-        }
+        .gold-dust { position: absolute; background: #d4af37; border-radius: 50%; pointer-events: none; opacity: 0; animation: floatGold 6s ease-in-infinite; }
+        @keyframes floatGold { 0% { transform: translateY(0) scale(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <!-- REPRODUCTOR DE AUDIO NATIVO (Solución para móviles) -->
     <audio id="miMusica" loop>
         <source src="cancion.mp3" type="audio/mpeg">
-        Tu navegador no soporta el audio.
     </audio>
 
-    <!-- PANTALLA 1: Escáner -->
+    <!-- Pantalla Inicial para destrabar audio -->
+    <div id="start-screen">
+        <button class="btn-start" onclick="initSystem()">INICIAR SISTEMA</button>
+    </div>
+
+    <!-- Escáner -->
     <div id="scanner-screen">
         <div class="scan-text">
             Protocolo de Seguridad<br><br>
             <span style="font-size: 11px; color: #555;">Sube el volumen y mantén presionado</span>
         </div>
-        
         <div class="touch-btn" id="btn-scan">
             <div class="progress-ring"></div>
             <div class="fingerprint-icon">👆</div>
         </div>
-        
         <div id="status-msg">Mantén presionado para confirmar identidad</div>
     </div>
 
-    <!-- PANTALLA 2: El Refugio -->
+    <!-- Refugio -->
     <div id="sanctuary-screen" class="sanctuary">
         <div class="glowing-heart">❤️</div>
         <div class="letter">
@@ -214,47 +198,54 @@
     <script>
         const btnScan = document.getElementById('btn-scan');
         const statusMsg = document.getElementById('status-msg');
+        const startScreen = document.getElementById('start-screen');
         const scannerScreen = document.getElementById('scanner-screen');
         const sanctuaryScreen = document.getElementById('sanctuary-screen');
         const reproductorAudio = document.getElementById('miMusica');
         
         let pressTimer;
         let isScanComplete = false;
-        const requiredTime = 3000; // 3 segundos presionando
+        const requiredTime = 3000; 
 
-        // Inicializa el audio al tocar la pantalla por primera vez (truco para Safari/iPhone)
-        document.body.addEventListener('touchstart', function() {
-            reproductorAudio.load();
-        }, { once: true });
+        // Función clave: El primer clic destraba el audio del celular
+        function initSystem() {
+            // Un truco: reproducir y pausar inmediatamente para que el cel confíe en el audio
+            reproductorAudio.play().then(() => {
+                reproductorAudio.pause();
+            }).catch(e => console.log("Audio prep falló", e));
 
-        // Inicia el escaneo y la música
+            startScreen.style.opacity = '0';
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                scannerScreen.style.visibility = 'visible';
+                scannerScreen.style.opacity = '1';
+            }, 500);
+        }
+
         const startScan = (e) => {
             if(isScanComplete) return;
             e.preventDefault(); 
             btnScan.classList.add('active');
             statusMsg.textContent = "Analizando... no sueltes.";
             
-            // Reproducir música al tocar
-            reproductorAudio.play().catch(error => console.log("Audio bloqueado, esperando interacción válida."));
+            // Ahora sí, arranca la música
+            reproductorAudio.play();
             
             pressTimer = setTimeout(() => {
                 scanComplete();
             }, requiredTime);
         };
 
-        // Si suelta antes de tiempo
         const cancelScan = () => {
             if(isScanComplete) return; 
             clearTimeout(pressTimer);
             btnScan.classList.remove('active');
             statusMsg.textContent = "Escaneo interrumpido. Mantén presionado.";
             
-            // Pausar música y reiniciar si suelta el dedo
             reproductorAudio.pause();
             reproductorAudio.currentTime = 0;
         };
 
-        // Escaneo completado
         const scanComplete = () => {
             isScanComplete = true;
             statusMsg.style.color = "#00ff00";
@@ -273,14 +264,13 @@
             }, 1500);
         };
 
-        // Eventos táctiles
-        btnScan.addEventListener('touchstart', startScan);
+        // Escuchar eventos táctiles
+        btnScan.addEventListener('touchstart', startScan, {passive: false});
         btnScan.addEventListener('touchend', cancelScan);
         btnScan.addEventListener('mousedown', startScan);
         btnScan.addEventListener('mouseup', cancelScan);
         btnScan.addEventListener('mouseleave', cancelScan);
 
-        // Crear partículas
         function createGoldDust() {
             for(let i = 0; i < 40; i++) {
                 let dust = document.createElement('div');
