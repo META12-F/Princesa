@@ -174,21 +174,15 @@
             50% { opacity: 0.8; }
             100% { transform: translateY(-100vh) scale(1); opacity: 0; }
         }
-
-        /* Ocultar el reproductor de YouTube */
-        #youtube-player {
-            position: absolute;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-            opacity: 0;
-        }
     </style>
 </head>
 <body>
 
-    <!-- REPRODUCTOR DE YOUTUBE OCULTO -->
-    <div id="youtube-player"></div>
+    <!-- REPRODUCTOR DE AUDIO NATIVO (Solución para móviles) -->
+    <audio id="miMusica" loop>
+        <source src="cancion.mp3" type="audio/mpeg">
+        Tu navegador no soporta el audio.
+    </audio>
 
     <!-- PANTALLA 1: Escáner -->
     <div id="scanner-screen">
@@ -217,33 +211,21 @@
         </div>
     </div>
 
-    <!-- API DE YOUTUBE -->
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Configuración de la música
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                height: '0',
-                width: '0',
-                videoId: '-hoZpSoKAYE', // ID de la canción que elegiste
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'showinfo': 0,
-                    'rel': 0
-                }
-            });
-        }
-
         const btnScan = document.getElementById('btn-scan');
         const statusMsg = document.getElementById('status-msg');
         const scannerScreen = document.getElementById('scanner-screen');
         const sanctuaryScreen = document.getElementById('sanctuary-screen');
+        const reproductorAudio = document.getElementById('miMusica');
         
         let pressTimer;
         let isScanComplete = false;
         const requiredTime = 3000; // 3 segundos presionando
+
+        // Inicializa el audio al tocar la pantalla por primera vez (truco para Safari/iPhone)
+        document.body.addEventListener('touchstart', function() {
+            reproductorAudio.load();
+        }, { once: true });
 
         // Inicia el escaneo y la música
         const startScan = (e) => {
@@ -253,9 +235,7 @@
             statusMsg.textContent = "Analizando... no sueltes.";
             
             // Reproducir música al tocar
-            if(player && typeof player.playVideo === 'function') {
-                player.playVideo();
-            }
+            reproductorAudio.play().catch(error => console.log("Audio bloqueado, esperando interacción válida."));
             
             pressTimer = setTimeout(() => {
                 scanComplete();
@@ -264,15 +244,14 @@
 
         // Si suelta antes de tiempo
         const cancelScan = () => {
-            if(isScanComplete) return; // Si ya terminó, no hace nada
+            if(isScanComplete) return; 
             clearTimeout(pressTimer);
             btnScan.classList.remove('active');
             statusMsg.textContent = "Escaneo interrumpido. Mantén presionado.";
             
-            // Pausar música si suelta el dedo
-            if(player && typeof player.pauseVideo === 'function') {
-                player.pauseVideo();
-            }
+            // Pausar música y reiniciar si suelta el dedo
+            reproductorAudio.pause();
+            reproductorAudio.currentTime = 0;
         };
 
         // Escaneo completado
