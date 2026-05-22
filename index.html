@@ -147,13 +147,13 @@
 
         .letter { text-align: center; max-width: 400px; }
         .letter h1 { font-family: 'Cinzel', serif; font-size: 24px; color: #d4af37; margin-bottom: 20px; opacity: 0; transition: opacity 2s ease 2s; }
-        .letter p { font-size: 15px; line-height: 1.8; color: #e0e0e0; margin-bottom: 15px; opacity: 0; transform: translateY(15px); }
+        .letter p { font-size: 14px; line-height: 1.7; color: #e0e0e0; margin-bottom: 15px; opacity: 0; transform: translateY(15px); }
         .sanctuary-active .letter h1 { opacity: 1; }
         .sanctuary-active .letter p:nth-child(2) { transition: all 2s ease 3.5s; opacity: 1; transform: translateY(0); }
-        .sanctuary-active .letter p:nth-child(3) { transition: all 2s ease 5.5s; opacity: 1; transform: translateY(0); }
-        .sanctuary-active .letter p:nth-child(4) { transition: all 2s ease 7.5s; opacity: 1; transform: translateY(0); }
+        .sanctuary-active .letter p:nth-child(3) { transition: all 2s ease 6.5s; opacity: 1; transform: translateY(0); }
+        .sanctuary-active .letter p:nth-child(4) { transition: all 2s ease 9.5s; opacity: 1; transform: translateY(0); }
         .signature { font-family: 'Cinzel', serif; color: #d4af37; font-size: 18px; margin-top: 30px; opacity: 0; }
-        .sanctuary-active .signature { transition: opacity 2s ease 9.5s; opacity: 1; }
+        .sanctuary-active .signature { transition: opacity 2s ease 12s; opacity: 1; }
 
         .gold-dust { position: absolute; background: #d4af37; border-radius: 50%; pointer-events: none; opacity: 0; animation: floatGold 6s ease-in-infinite; }
         @keyframes floatGold { 0% { transform: translateY(0) scale(0); opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
@@ -165,12 +165,10 @@
         <source src="cancion.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Pantalla Inicial -->
     <div id="start-screen">
         <button class="btn-start" onclick="initSystem()">INICIAR SISTEMA</button>
     </div>
 
-    <!-- Escáner -->
     <div id="scanner-screen">
         <div class="scan-text">
             Protocolo de Seguridad<br><br>
@@ -183,14 +181,13 @@
         <div id="status-msg">Mantén presionado para confirmar identidad</div>
     </div>
 
-    <!-- Refugio -->
     <div id="sanctuary-screen" class="sanctuary">
         <div class="glowing-heart">❤️</div>
         <div class="letter">
-            <h1>Bienvenida, mi amor.</h1>
-            <p>Sé que el mundo allá afuera va muy rápido. Que trabajas sin parar, que a veces el cansancio pesa y las desveladas son muchas.</p>
-            <p>Por eso programé este pequeño espacio para ti. Para que cuando sientas que no puedes más, sepas que tienes un lugar seguro donde solo tienes que respirar, soltar el estrés y dejar que yo te cuide.</p>
-            <p>Eres una mujer increíble, Karlita. Fuerte, hermosa y valiente. Guardo mis madrugadas, mis canciones y mi mejor versión para compartirlas contigo. Ya quiero verte a los ojos este viernes.</p>
+            <h1>Para ti, Karlita.</h1>
+            <p>Sé que las heridas de amor del pasado te hacen dudar y tienes miedo de volver a enamorarte. Piensas que por tener hijos es difícil que alguien te quiera de verdad, pero yo también soy papá de cuatro y sé perfectamente que eso no te resta valor; al contrario, te hace una mujer más admirable, fuerte y digna de un amor completo.</p>
+            <p>A veces crees que no puedo amarte o que los 300 kilómetros entre Juárez y Chihuahua son un obstáculo. Pero para mí, esa distancia no es nada comparada con lo que me haces sentir. Como te dije antes: no tienes que sanar sola.</p>
+            <p>Programé este pequeño espacio para ti. Para que cuando sientas que no puedes más, sepas que aquí tienes a alguien que te cuida. Te ofrezco mis madrugadas, mis canciones y mi mejor versión para demostrarte que vales cada kilómetro.</p>
             <div class="signature">Tu ingeniero y admirador, David.</div>
         </div>
     </div>
